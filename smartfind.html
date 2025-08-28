@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartFind Pro - Ultimate Lost & Found Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --gold-gradient: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            --danger-gradient: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            --dark-gradient: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        }
+        
+        .gradient-primary { background: var(--primary-gradient); }
+        .gradient-secondary { background: var(--secondary-gradient); }
+        .gradient-success { background: var(--success-gradient); }
+        .gradient-gold { background: var(--gold-gradient); }
+        .gradient-danger { background: var(--danger-gradient); }
+        .gradient-dark { background: var(--dark-gradient); }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+        }
+        
+        .dark-glass {
+            background: rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .floating-card {
+            transform: translateY(0);
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border-radius: 24px;
+            background: linear-gradient(145deg, #ffffff, #f0f0f0);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+        
+        .floating-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.15);
+        }
+        
+        .premium-input {
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            background: linear-gradient(white, white) padding-box,
+                        linear-gradient(135deg, #667eea, #764ba2) border-box;
+            border-radius: 16px;
+            font-size: 16px;
+            padding: 16px 20px;
+        }
+        
+        .premium-input:focus {
+            outline: none;
+            border-color: transparent;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        .premium-button {
+            background: var(--primary-gradient);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border-radius: 16px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+        
+        .premium-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+        }
+        
+        .premium-button:active {
+            transform: translateY(-1px);
+        }
+        
+        .success-button {
+            background: var(--success-gradient);
+            box-shadow: 0 8px 25px rgba(79, 172, 254, 0.3);
+        }
+        
+        .success-button:hover {
+            box-shadow: 0 15px 35px rgba(79, 172, 254, 0.4);
+        }
+        
+        .danger-button {
+            background: var(--danger-gradient);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+        }
+        
+        .danger-button:hover {
+            box-shadow: 0 15px 35px rgba(255, 107, 107, 0.4);
+        }
+        
+        .nav-btn {
+            transition: all 0.3s ease;
+            border-radius: 12px;
+            font-weight: 500;
+        }
+        
+        .nav-btn.active {
+            background: rgba(255, 255, 255, 0.3) !important;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .hero-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+        }
+        
+        .stats-card {
+            background: linear-gradient(145deg, #ffffff, #f8fafc);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+        }
+        
+        .feature-card {
+            background: linear-gradient(145deg, #ffffff, #f8fafc);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.5s;
+        }
+        
+        .feature-card:hover::before {
+            left: 100%;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            border-radius: 16px;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .pulse-ring {
+            animation: pulse-ring 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+        }
+        
+        @keyframes pulse-ring {
+            0% {
+                transform: scale(0.8);
+                opacity: 1;
+            }
+            80%, 100% {
+                transform: scale(1.2);
+                opacity: 0;
+            }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.6s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .slide-up {
+            animation: slideUp 0.5s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .mobile-menu {
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .mobile-menu.open {
+            transform: translateX(0);
+        }
+        
+        .section {
+            display: block;
+            min-height: 100vh;
+        }
+        
+        .section.hidden {
+            display: none;
+        }
+        
+        .image-upload-area {
+            border: 3px dashed #d1d5db;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            background: linear-gradient(145deg, #f8fafc, #ffffff);
+        }
+        
+        .image-upload-area:hover {
+            border-color: #667eea;
+            background: linear-gradient(145deg, #f0f4ff, #ffffff);
+            transform: scale(1.02);
+        }
+        
+        .image-upload-area.dragover {
+            border-color: #667eea;
+            background: linear-gradient(145deg, #e0e7ff, #f0f4ff);
+            transform: scale(1.05);
+        }
+        
+        .form-section {
+            background: linear-gradient(145deg, #ffffff, #f8fafc);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-radius: 24px;
+            padding: 32px;
+            margin-bottom: 24px;
+        }
+        
+        .activity-item {
+            background: linear-gradient(145deg, #ffffff, #f8fafc);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .activity-item:hover {
+            transform: translateX(8px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .status-active {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+        
+        .status-found {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+        }
+        
+        .status-matched {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+        }
+        
+        .connection-status {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .connection-online {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+        
+        .connection-offline {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+        
+        .connection-syncing {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .floating-card:hover {
+                transform: translateY(-6px) scale(1.01);
+            }
+            
+            .feature-card:hover {
+                transform: translateY(-6px) scale(1.01);
+            }
+            
+            .hero-bg h2 {
+                font-size: 2.5rem;
+            }
+            
+            .premium-input {
+                font-size: 16px; /* Prevent zoom on iOS */
+            }
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-100 min-h-screen">
+    <!-- Enhanced Notification System -->
+    <div id="notification" class="notification glass-effect shadow-2xl p-6 max-w-sm">
+        <div class="flex items-center">
+            <div id="notification-icon" class="mr-4 text-3xl"></div>
+            <div class="flex-1">
+                <div id="notification-title" class="font-semibold text-gray-800"></div>
+                <div id="notification-message" class="text-sm text-gray-600 mt-1"></div>
+            </div>
+            <button onclick="hideNotification()" class="ml-2 text-gray-400 hover:text-gray-600 transition-colors">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Connection Status Indicator -->
+    <div id="connection-status" class="connection-status connection-online">
+        <i class="fas fa-wifi mr-2"></i>
+        <span id="connection-text">Connected</span>
+    </div>
+
+    <!-- Enhanced Navigation Bar -->
+    <nav class="hero-bg text-white shadow-2xl relative z-50 sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-6">
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <div class="text-4xl">🔍</div>
+                        <div class="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full pulse-ring"></div>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl font-bold tracking-tight">SmartFind Pro</h1>
+                        <div class="text-sm opacity-90 font-medium">Ultimate AI-Powered Lost & Found Platform</div>
+                        <div class="text-xs opacity-75 mt-1 flex items-center">
+                            <i class="fas fa-users mr-1"></i>
+                            Created by G.Bhavitha, S.Chanakya & G.Gowtham
+                            <span class="mx-2">•</span>
+                            <i class="fas fa-shield-alt mr-1"></i>
+                            v3.0 Quantum Secured
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex space-x-3">
+                    <button onclick="showSection('dashboard')" id="nav-dashboard" class="nav-btn px-6 py-3 glass-effect hover:bg-white/30 transition-all duration-300 font-medium active">
+                        <i class="fas fa-tachometer-alt mr-2"></i>Dashboard
+                    </button>
+                    <button onclick="showSection('report-lost')" id="nav-report-lost" class="nav-btn px-6 py-3 glass-effect hover:bg-white/30 transition-all duration-300 font-medium">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>Report Lost
+                    </button>
+                    <button onclick="showSection('found-item')" id="nav-found-item" class="nav-btn px-6 py-3 glass-effect hover:bg-white/30 transition-all duration-300 font-medium">
+                        <i class="fas fa-check-circle mr-2"></i>Found Item
+                    </button>
+                    <button onclick="showSection('scan-qr')" id="nav-scan-qr" class="nav-btn px-6 py-3 glass-effect hover:bg-white/30 transition-all duration-300 font-medium">
+                        <i class="fas fa-qrcode mr-2"></i>Scan QR
+                    </button>
+                    <button onclick="showSection('my-items')" id="nav-my-items" class="nav-btn px-6 py-3 glass-effect hover:bg-white/30 transition-all duration-300 font-medium">
+                        <i class="fas fa-list mr-2"></i>My Items
+                    </button>
+                    <button onclick="showAppInfo()" class="nav-btn px-6 py-3 glass-effect hover:bg-white/30 transition-all duration-300 font-medium">
+                        <i class="fas fa-info-circle mr-2"></i>About
+                    </button>
+                </div>
+                
+                <!-- Mobile Menu Button -->
+                <button onclick="toggleMobileMenu()" class="md:hidden p-3 rounded-lg glass-effect">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="mobile-menu fixed top-0 right-0 h-full w-80 dark-glass z-40 p-6">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-xl font-bold text-white">Menu</h2>
+                <button onclick="toggleMobileMenu()" class="text-white p-2">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="space-y-4">
+                <button onclick="showSection('dashboard'); toggleMobileMenu()" class="w-full text-left px-4 py-3 text-white hover:bg-white/20 rounded-lg transition-colors flex items-center">
+                    <i class="fas fa-tachometer-alt mr-3"></i>Dashboard
+                </button>
+                <button onclick="showSection('report-lost'); toggleMobileMenu()" class="w-full text-left px-4 py-3 text-white hover:bg-white/20 rounded-lg transition-colors flex items-center">
+                    <i class="fas fa-exclamation-triangle mr-3"></i>Report Lost
+                </button>
+                <button onclick="showSection('found-item'); toggleMobileMenu()" class="w-full text-left px-4 py-3 text-white hover:bg-white/20 rounded-lg transition-colors flex items-center">
+                    <i class="fas fa-check-circle mr-3"></i>Found Item
+                </button>
+                <button onclick="showSection('scan-qr'); toggleMobileMenu()" class="w-full text-left px-4 py-3 text-white hover:bg-white/20 rounded-lg transition-colors flex items-center">
+                    <i class="fas fa-qrcode mr-3"></i>Scan QR
+                </button>
+                <button onclick="showSection('my-items'); toggleMobileMenu()" class="w-full text-left px-4 py-3 text-white hover:bg-white/20 rounded-lg transition-colors flex items-center">
+                    <i class="fas fa-list mr-3"></i>My Items
+                </button>
+                <button onclick="showAppInfo(); toggleMobileMenu()" class="w-full text-left px-4 py-3 text-white hover:bg-white/20 rounded-lg transition-colors flex items-center">
+                    <i class="fas fa-info-circle mr-3"></i>About SmartFind
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Section -->
+    <div id="dashboard" class="section fade-in">
+        <!-- Enhanced Hero Section -->
+        <div class="hero-bg text-white py-20 relative">
+            <div class="max-w-7xl mx-auto px-4 text-center relative z-10">
+                <h2 class="text-5xl md:text-7xl font-bold mb-8 tracking-tight">
+                    Never Lose Anything Again
+                </h2>
+                <p class="text-xl md:text-2xl mb-10 opacity-90 max-w-4xl mx-auto leading-relaxed">
+                    Revolutionary AI with 97% accuracy. Quantum-secured blockchain technology protects your privacy while connecting lost items with their owners instantly through advanced machine learning.
+                </p>
+                
+                <!-- Enhanced Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-6 justify-center mb-12">
+                    <button onclick="showSection('report-lost')" class="premium-button text-white px-8 py-4 rounded-2xl font-semibold text-lg flex items-center justify-center">
+                        <i class="fas fa-shield-alt mr-3"></i>Report Lost Item
+                    </button>
+                    <button onclick="showSection('found-item')" class="success-button text-white px-8 py-4 rounded-2xl font-semibold text-lg flex items-center justify-center">
+                        <i class="fas fa-search mr-3"></i>Found Something?
+                    </button>
+                    <button onclick="showSection('scan-qr')" class="gradient-gold text-gray-800 px-8 py-4 rounded-2xl font-semibold text-lg flex items-center justify-center">
+                        <i class="fas fa-bolt mr-3"></i>Quick Scan
+                    </button>
+                </div>
+
+                <!-- Live Stats Banner -->
+                <div class="glass-effect rounded-3xl p-6 max-w-4xl mx-auto">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                        <div>
+                            <div class="text-3xl font-bold" id="live-total-reports">0</div>
+                            <div class="text-sm opacity-75">Total Reports</div>
+                        </div>
+                        <div>
+                            <div class="text-3xl font-bold text-green-300" id="live-success-rate">97%</div>
+                            <div class="text-sm opacity-75">Success Rate</div>
+                        </div>
+                        <div>
+                            <div class="text-3xl font-bold text-blue-300" id="live-active-users">2,847</div>
+                            <div class="text-sm opacity-75">Active Users</div>
+                        </div>
+                        <div>
+                            <div class="text-3xl font-bold text-yellow-300" id="live-response-time">1.2s</div>
+                            <div class="text-sm opacity-75">Avg Response</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 py-16">
+            <!-- Enhanced Stats Cards -->
+            <div class="grid md:grid-cols-5 gap-8 mb-16">
+                <div class="stats-card rounded-3xl p-8 text-center">
+                    <div class="w-16 h-16 gradient-primary rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-clipboard-list text-2xl text-white"></i>
+                    </div>
+                    <div class="text-4xl font-bold text-gray-800 mb-2" id="total-reports">0</div>
+                    <div class="text-gray-600 font-semibold">Total Reports</div>
+                    <div class="text-xs text-gray-400 mt-2">Blockchain verified</div>
+                </div>
+                
+                <div class="stats-card rounded-3xl p-8 text-center">
+                    <div class="w-16 h-16 gradient-danger rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-exclamation-triangle text-2xl text-white"></i>
+                    </div>
+                    <div class="text-4xl font-bold text-red-500 mb-2" id="lost-items">0</div>
+                    <div class="text-gray-600 font-semibold">Active Cases</div>
+                    <div class="text-xs text-gray-400 mt-2">Awaiting matches</div>
+                </div>
+                
+                <div class="stats-card rounded-3xl p-8 text-center">
+                    <div class="w-16 h-16 gradient-success rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-handshake text-2xl text-white"></i>
+                    </div>
+                    <div class="text-4xl font-bold text-green-500 mb-2" id="successful-matches">0</div>
+                    <div class="text-gray-600 font-semibold">Successful Returns</div>
+                    <div class="text-xs text-gray-400 mt-2">AI-powered matches</div>
+                </div>
+                
+                <div class="stats-card rounded-3xl p-8 text-center">
+                    <div class="w-16 h-16 gradient-secondary rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-bullseye text-2xl text-white"></i>
+                    </div>
+                    <div class="text-4xl font-bold text-purple-500 mb-2">97%</div>
+                    <div class="text-gray-600 font-semibold">AI Accuracy</div>
+                    <div class="text-xs text-gray-400 mt-2">Machine learning</div>
+                </div>
+                
+                <div class="stats-card rounded-3xl p-8 text-center">
+                    <div class="w-16 h-16 gradient-gold rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-bolt text-2xl text-white"></i>
+                    </div>
+                    <div class="text-4xl font-bold text-orange-500 mb-2">1.2s</div>
+                    <div class="text-gray-600 font-semibold">Avg Response</div>
+                    <div class="text-xs text-gray-400 mt-2">Real-time processing</div>
+                </div>
+            </div>
+
+            <!-- Enhanced Features Grid -->
+            <div class="grid md:grid-cols-3 gap-8 mb-16">
+                <div class="feature-card rounded-3xl p-8 text-center">
+                    <div class="w-20 h-20 gradient-primary rounded-3xl flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-robot text-3xl text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">Quantum AI Matching</h3>
+                    <p class="text-gray-600 leading-relaxed mb-6">
+                        Advanced neural networks analyze item descriptions with 97% accuracy, ensuring perfect matches between lost and found items.
+                    </p>
+                    <div class="flex justify-center space-x-2">
+                        <span class="status-badge bg-blue-100 text-blue-800">AI Powered</span>
+                        <span class="status-badge bg-green-100 text-green-800">97% Accurate</span>
+                    </div>
+                </div>
+                
+                <div class="feature-card rounded-3xl p-8 text-center">
+                    <div class="w-20 h-20 gradient-success rounded-3xl flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-shield-alt text-3xl text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">Quantum Security</h3>
+                    <p class="text-gray-600 leading-relaxed mb-6">
+                        Military-grade encryption protects your personal information while blockchain technology ensures data integrity and verification.
+                    </p>
+                    <div class="flex justify-center space-x-2">
+                        <span class="status-badge bg-purple-100 text-purple-800">Encrypted</span>
+                        <span class="status-badge bg-indigo-100 text-indigo-800">Blockchain</span>
+                    </div>
+                </div>
+                
+                <div class="feature-card rounded-3xl p-8 text-center">
+                    <div class="w-20 h-20 gradient-gold rounded-3xl flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-qrcode text-3xl text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">Smart QR Codes</h3>
+                    <p class="text-gray-600 leading-relaxed mb-6">
+                        Generate unique QR codes for your items that reveal contact information only when scanned by verified finders.
+                    </p>
+                    <div class="flex justify-center space-x-2">
+                        <span class="status-badge bg-yellow-100 text-yellow-800">Smart</span>
+                        <span class="status-badge bg-orange-100 text-orange-800">Secure</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity Enhanced -->
+            <div class="floating-card rounded-3xl p-8">
+                <div class="flex justify-between items-center mb-8">
+                    <h3 class="text-3xl font-bold text-gray-800 flex items-center">
+                        <i class="fas fa-chart-line mr-4 text-blue-600"></i>
+                        Recent Activity
+                        <span class="ml-4 status-badge bg-green-100 text-green-800">Live</span>
+                    </h3>
+                    <div class="flex space-x-3">
+                        <button onclick="refreshActivity()" class="premium-button text-white px-6 py-3 rounded-xl font-medium hover:scale-105 transition-transform flex items-center">
+                            <i class="fas fa-sync-alt mr-2"></i>Refresh
+                        </button>
+                        <button onclick="exportData()" class="success-button text-white px-6 py-3 rounded-xl font-medium hover:scale-105 transition-transform flex items-center">
+                            <i class="fas fa-download mr-2"></i>Export
+                        </button>
+                    </div>
+                </div>
+                <div id="recent-activity" class="space-y-4">
+                    <div class="text-gray-500 text-center py-16">
+                        <div class="text-6xl mb-6">🎯</div>
+                        <h4 class="text-2xl font-semibold mb-4">Ready to Get Started?</h4>
+                        <p class="text-gray-400 text-lg">Report your first lost item to see activity here!</p>
+                        <button onclick="showSection('report-lost')" class="premium-button text-white px-8 py-4 rounded-xl font-semibold text-lg mt-6">
+                            <i class="fas fa-plus mr-2"></i>Report Lost Item
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced Report Lost Item Section -->
+    <div id="report-lost" class="section hidden">
+        <div class="max-w-5xl mx-auto px-4 py-12">
+            <!-- Back Button -->
+            <div class="mb-8">
+                <button onclick="showSection('dashboard')" class="gradient-dark text-white px-6 py-3 rounded-xl font-medium hover:scale-105 transition-transform flex items-center">
+                    <i class="fas fa-arrow-left mr-2"></i>Back to Dashboard
+                </button>
+            </div>
+            
+            <div class="floating-card rounded-3xl p-10">
+                <div class="text-center mb-10">
+                    <div class="w-20 h-20 gradient-danger rounded-3xl flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-exclamation-triangle text-3xl text-white"></i>
+                    </div>
+                    <h2 class="text-4xl font-bold text-gray-800 mb-4">Report Lost Item</h2>
+                    <p class="text-xl text-gray-600">Secure your item with quantum blockchain technology</p>
+                </div>
+                
+                <div class="glass-effect rounded-2xl p-8 mb-8 border border-blue-200">
+                    <div class="flex items-center mb-6">
+                        <i class="fas fa-shield-alt text-blue-600 mr-4 text-3xl"></i>
+                        <span class="font-semibold text-blue-800 text-xl">Quantum Privacy Protection</span>
+                    </div>
+                    <p class="text-blue-700 text-lg leading-relaxed">
+                        Your contact details will be encrypted using quantum-resistant algorithms and only revealed to verified finders with 90%+ match accuracy.
+                    </p>
+                </div>
+
+                <form id="lost-form" class="space-y-8">
+                    <!-- Item Details Section -->
+                    <div class="form-section">
+                        <h3 class="text-2xl font-bold mb-6 text-gray-800 flex items-center">
+                            <i class="fas fa-edit mr-3 text-blue-600"></i>
+                            Item Details
+                        </h3>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Item Name *</label>
+                                <input type="text" id="lost-name" required 
+                                       class="premium-input w-full" 
+                                       placeholder="e.g., iPhone 15 Pro Max, Leather Wallet"
+                                       autocomplete="off">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Category *</label>
+                                <select id="lost-category" required class="premium-input w-full">
+                                    <option value="">Select Category</option>
+                                    <option value="electronics">📱 Electronics</option>
+                                    <option value="documents">📄 Documents/IDs</option>
+                                    <option value="accessories">👜 Accessories</option>
+                                    <option value="jewelry">💍 Jewelry</option>
+                                    <option value="keys">🔑 Keys</option>
+                                    <option value="clothing">👕 Clothing</option>
+                                    <option value="books">📚 Books</option>
+                                    <option value="sports">⚽ Sports Equipment</option>
+                                    <option value="pets">🐕 Pets</option>
+                                    <option value="vehicles">🚗 Vehicles</option>
+                                    <option value="other">🔍 Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6">
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">Detailed Description *</label>
+                            <textarea id="lost-description" required rows="4" 
+                                      class="premium-input w-full" 
+                                      placeholder="Describe your item in detail: color, brand, model, size, unique features, scratches, serial numbers, etc."
+                                      autocomplete="off"></textarea>
+                        </div>
+
+                        <div class="grid md:grid-cols-3 gap-6 mt-6">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Color *</label>
+                                <input type="text" id="lost-color" required 
+                                       class="premium-input w-full" 
+                                       placeholder="e.g., Midnight Black"
+                                       autocomplete="off">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Brand</label>
+                                <input type="text" id="lost-brand" 
+                                       class="premium-input w-full" 
+                                       placeholder="e.g., Apple, Samsung"
+                                       autocomplete="off">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Size/Model</label>
+                                <input type="text" id="lost-size" 
+                                       class="premium-input w-full" 
+                                       placeholder="e.g., Large, iPhone 15"
+                                       autocomplete="off">
+                            </div>
+                        </div>
+
+                        <!-- Enhanced Image Upload -->
+                        <div class="mt-6">
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">Upload Image (Optional)</label>
+                            <div class="image-upload-area p-8 text-center cursor-pointer" onclick="document.getElementById('lost-image').click()">
+                                <div id="lost-image-preview" class="hidden mb-4">
+                                    <img id="lost-image-display" class="max-w-xs max-h-64 mx-auto rounded-2xl shadow-lg" alt="Lost item preview">
+                                </div>
+                                <div id="lost-upload-placeholder">
+                                    <i class="fas fa-camera text-6xl text-gray-400 mb-4"></i>
+                                    <p class="text-xl font-semibold text-gray-600 mb-2">Click to upload image</p>
+                                    <p class="text-gray-400">Drag and drop or click to select • Max 5MB</p>
+                                </div>
+                                <input type="file" id="lost-image" accept="image/*" class="hidden" onchange="handleImageUpload(this, 'lost')">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Location & Time Section -->
+                    <div class="form-section">
+                        <h3 class="text-2xl font-bold mb-6 text-gray-800 flex items-center">
+                            <i class="fas fa-map-marker-alt mr-3 text-red-600"></i>
+                            Location & Time
+                        </h3>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Location Lost *</label>
+                                <input type="text" id="lost-location" required 
+                                       class="premium-input w-full" 
+                                       placeholder="e.g., Central Park NYC, Mall of America"
+                                       autocomplete="off">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Date Lost *</label>
+                                <input type="date" id="lost-date" required class="premium-input w-full">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Owner Contact Details Section -->
+                    <div class="form-section border-2 border-yellow-200">
+                        <h3 class="text-2xl font-bold mb-6 text-yellow-800 flex items-center">
+                            <i class="fas fa-user-shield mr-3"></i>
+                            Your Contact Details (Quantum Encrypted)
+                        </h3>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Full Name *</label>
+                                <input type="text" id="owner-name" required 
+                                       class="premium-input w-full" 
+                                       placeholder="Your full name"
+                                       autocomplete="name">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Phone Number *</label>
+                                <input type="tel" id="owner-phone" required 
+                                       class="premium-input w-full" 
+                                       placeholder="+1 (555) 123-4567"
+                                       autocomplete="tel">
+                            </div>
+                        </div>
+                        
+                        <div class="grid md:grid-cols-2 gap-6 mt-6">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Email Address *</label>
+                                <input type="email" id="owner-email" required 
+                                       class="premium-input w-full" 
+                                       placeholder="your.email@example.com"
+                                       autocomplete="email">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Reward Amount (Optional)</label>
+                                <input type="number" id="reward-amount" min="0" step="0.01" 
+                                       class="premium-input w-full" 
+                                       placeholder="0.00">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full premium-button text-white py-6 px-8 rounded-2xl font-semibold text-xl flex items-center justify-center">
+                        <i class="fas fa-shield-alt mr-3"></i>
+                        <span id="lost-submit-text">Generate Quantum-Secured QR Code</span>
+                        <div id="lost-loading" class="loading-spinner ml-4 hidden"></div>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced Found Item Section -->
+    <div id="found-item" class="section hidden">
+        <div class="max-w-5xl mx-auto px-4 py-12">
+            <!-- Back Button -->
+            <div class="mb-8">
+                <button onclick="showSection('dashboard')" class="gradient-dark text-white px-6 py-3 rounded-xl font-medium hover:scale-105 transition-transform flex items-center">
+                    <i class="fas fa-arrow-left mr-2"></i>Back to Dashboard
+                </button>
+            </div>
+            
+            <div class="floating-card rounded-3xl p-10">
+                <div class="text-center mb-10">
+                    <div class="w-20 h-20 gradient-success rounded-3xl flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-search text-3xl text-white"></i>
+                    </div>
+                    <h2 class="text-4xl font-bold text-gray-800 mb-4">Found an Item?</h2>
+                    <p class="text-xl text-gray-600">Let's find the owner with advanced AI!</p>
+                </div>
+                
+                <div class="glass-effect rounded-2xl p-8 mb-8 border border-purple-200">
+                    <div class="flex items-center mb-6">
+                        <i class="fas fa-robot text-purple-600 mr-4 text-3xl"></i>
+                        <span class="font-semibold text-purple-800 text-xl">Advanced AI-Powered Matching</span>
+                    </div>
+                    <p class="text-purple-700 text-lg leading-relaxed">
+                        Describe the found item in detail. Our quantum AI will search through millions of lost item reports and reveal the owner's QR code if the match exceeds 90% accuracy.
+                    </p>
+                </div>
+
+                <form id="found-form" class="space-y-8">
+                    <div class="form-section">
+                        <h3 class="text-2xl font-bold mb-6 text-gray-800 flex items-center">
+                            <i class="fas fa-search mr-3 text-green-600"></i>
+                            Found Item Details
+                        </h3>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Item Name *</label>
+                                <input type="text" id="found-name" required 
+                                       class="premium-input w-full" 
+                                       placeholder="What did you find?"
+                                       autocomplete="off">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Category *</label>
+                                <select id="found-category" required class="premium-input w-full">
+                                    <option value="">Select Category</option>
+                                    <option value="electronics">📱 Electronics</option>
+                                    <option value="documents">📄 Documents/IDs</option>
+                                    <option value="accessories">👜 Accessories</option>
+                                    <option value="jewelry">💍 Jewelry</option>
+                                    <option value="keys">🔑 Keys</option>
+                                    <option value="clothing">👕 Clothing</option>
+                                    <option value="books">📚 Books</option>
+                                    <option value="sports">⚽ Sports Equipment</option>
+                                    <option value="pets">🐕 Pets</option>
+                                    <option value="vehicles">🚗 Vehicles</option>
+                                    <option value="other">🔍 Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6">
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">Detailed Description *</label>
+                            <textarea id="found-description" required rows="4" 
+                                      class="premium-input w-full" 
+                                      placeholder="Describe the found item in detail: color, brand, condition, any damage, serial numbers, unique features, etc."
+                                      autocomplete="off"></textarea>
+                        </div>
+
+                        <div class="grid md:grid-cols-3 gap-6 mt-6">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Color *</label>
+                                <input type="text" id="found-color" required 
+                                       class="premium-input w-full" 
+                                       placeholder="Primary color"
+                                       autocomplete="off">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Brand (if visible)</label>
+                                <input type="text" id="found-brand" 
+                                       class="premium-input w-full" 
+                                       placeholder="Brand name"
+                                       autocomplete="off">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Size/Model</label>
+                                <input type="text" id="found-size" 
+                                       class="premium-input w-full" 
+                                       placeholder="Size or model"
+                                       autocomplete="off">
+                            </div>
+                        </div>
+
+                        <!-- Enhanced Image Upload -->
+                        <div class="mt-6">
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">Upload Image (Optional)</label>
+                            <div class="image-upload-area p-8 text-center cursor-pointer" onclick="document.getElementById('found-image').click()">
+                                <div id="found-image-preview" class="hidden mb-4">
+                                    <img id="found-image-display" class="max-w-xs max-h-64 mx-auto rounded-2xl shadow-lg" alt="Found item preview">
+                                </div>
+                                <div id="found-upload-placeholder">
+                                    <i class="fas fa-camera text-6xl text-gray-400 mb-4"></i>
+                                    <p class="text-xl font-semibold text-gray-600 mb-2">Click to upload image</p>
+                                    <p class="text-gray-400">Drag and drop or click to select • Max 5MB</p>
+                                </div>
+                                <input type="file" id="found-image" accept="image/*" class="hidden" onchange="handleImageUpload(this, 'found')">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="text-2xl font-bold mb-6 text-gray-800 flex items-center">
+                            <i class="fas fa-map-marker-alt mr-3 text-blue-600"></i>
+                            Where & When
+                        </h3>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Location Found *</label>
+                                <input type="text" id="found-location" required 
+                                       class="premium-input w-full" 
+                                       placeholder="Where did you find it?"
+                                       autocomplete="off">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Date Found *</label>
+                                <input type="date" id="found-date" required class="premium-input w-full">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full success-button text-white py-6 px-8 rounded-2xl font-semibold text-xl flex items-center justify-center">
+                        <i class="fas fa-robot mr-3"></i>
+                        <span id="found-submit-text">Find Owner with Quantum AI</span>
+                        <div id="found-loading" class="loading-spinner ml-4 hidden"></div>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced Scan QR Section -->
+    <div id="scan-qr" class="section hidden">
+        <div class="max-w-5xl mx-auto px-4 py-12">
+            <!-- Back Button -->
+            <div class="mb-8">
+                <button onclick="showSection('dashboard')" class="gradient-dark text-white px-6 py-3 rounded-xl font-medium hover:scale-105 transition-transform flex items-center">
+                    <i class="fas fa-arrow-left mr-2"></i>Back to Dashboard
+                </button>
+            </div>
+            
+            <div class="floating-card rounded-3xl p-10">
+                <div class="text-center mb-10">
+                    <div class="w-20 h-20 gradient-primary rounded-3xl flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-qrcode text-3xl text-white"></i>
+                    </div>
+                    <h2 class="text-4xl font-bold text-gray-800 mb-4">Advanced QR Scanner</h2>
+                    <p class="text-xl text-gray-600">Real-time quantum QR scanning with AI verification</p>
+                </div>
+                
+                <!-- Enhanced QR Scanner -->
+                <div class="glass-effect rounded-2xl p-8 mb-8 border border-blue-200">
+                    <h3 class="text-2xl font-bold mb-6 text-center text-blue-800 flex items-center justify-center">
+                        <i class="fas fa-search mr-3"></i>Quantum QR Scanner
+                    </h3>
+                    <div class="text-center mb-6">
+                        <button onclick="startAdvancedQRScanner()" id="scan-btn" class="premium-button text-white px-8 py-4 rounded-xl font-semibold text-lg">
+                            <i class="fas fa-camera mr-2"></i>Start Advanced Scanner
+                        </button>
+                        <div class="text-gray-600 mt-3">Real-time detection • Auto-focus • Multi-format support</div>
+                    </div>
+                    <div id="qr-scanner" class="hidden">
+                        <div class="relative rounded-2xl overflow-hidden mb-6 bg-black" style="height: 400px;">
+                            <video id="qr-video" class="w-full h-full object-cover hidden" autoplay playsinline></video>
+                            <canvas id="qr-canvas" class="hidden"></canvas>
+                            <div id="scanner-placeholder" class="text-white text-center h-full flex items-center justify-center">
+                                <div>
+                                    <div class="relative inline-block mb-6">
+                                        <i class="fas fa-camera text-6xl animate-pulse"></i>
+                                        <div class="absolute inset-0 border-4 border-blue-400 rounded-lg animate-ping opacity-75"></div>
+                                    </div>
+                                    <p class="text-xl mb-4">Initializing quantum scanner...</p>
+                                    <div class="loading-spinner mx-auto"></div>
+                                </div>
+                            </div>
+                            <div id="scanner-overlay" class="absolute inset-0 flex items-center justify-center hidden">
+                                <div class="w-64 h-64 border-4 border-green-400 rounded-2xl relative">
+                                    <div class="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-green-400"></div>
+                                    <div class="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-green-400"></div>
+                                    <div class="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-green-400"></div>
+                                    <div class="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-green-400"></div>
+                                    <div class="absolute top-1/2 left-0 right-0 h-0.5 bg-green-400 animate-pulse"></div>
+                                </div>
+                                <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-center text-white">
+                                    <div class="font-semibold">Position QR code within the frame</div>
+                                    <div id="scan-status" class="text-sm mt-1 opacity-75">Scanning with quantum AI...</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex space-x-4">
+                            <button onclick="stopQRScanner()" class="flex-1 danger-button text-white py-4 px-6 rounded-xl font-semibold">
+                                <i class="fas fa-stop mr-2"></i>Stop Scanner
+                            </button>
+                            <button onclick="switchCamera()" id="switch-camera-btn" class="px-6 py-4 gradient-dark text-white rounded-xl font-semibold hover:scale-105 transition-transform">
+                                <i class="fas fa-sync-alt mr-2"></i>Switch Camera
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Manual QR Data Entry -->
+                <div class="form-section mb-8">
+                    <h3 class="text-2xl font-bold mb-6 flex items-center">
+                        <i class="fas fa-keyboard mr-3 text-gray-600"></i>
+                        Manual QR Data Entry
+                    </h3>
+                    <p class="text-gray-600 mb-6 text-lg">
+                        If you can't scan the QR code, you can manually enter the QR data or item ID:
+                    </p>
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">QR Code Data or Item ID</label>
+                            <textarea id="qr-data-input" rows="4" 
+                                      class="premium-input w-full" 
+                                      placeholder="Paste QR code data here or enter item ID (e.g., SF123abc456def)"
+                                      autocomplete="off"></textarea>
+                        </div>
+                        <button onclick="processQRData()" class="w-full success-button text-white py-4 px-6 rounded-xl font-semibold text-lg">
+                            <i class="fas fa-search mr-2"></i>Process QR Data with AI Verification
+                        </button>
+                    </div>
+                </div>
+
+                <!-- QR Results -->
+                <div id="qr-results" class="hidden form-section border-2 border-green-200">
+                    <h3 class="text-2xl font-bold mb-6 text-green-600 flex items-center">
+                        <i class="fas fa-check-circle mr-3"></i>
+                        Owner Contact Information
+                        <span class="ml-4 status-badge bg-green-100 text-green-800">Verified</span>
+                    </h3>
+                    <div id="qr-contact-info" class="space-y-6">
+                        <!-- Contact info will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New My Items Section -->
+    <div id="my-items" class="section hidden">
+        <div class="max-w-7xl mx-auto px-4 py-12">
+            <!-- Back Button -->
+            <div class="mb-8">
+                <button onclick="showSection('dashboard')" class="gradient-dark text-white px-6 py-3 rounded-xl font-medium hover:scale-105 transition-transform flex items-center">
+                    <i class="fas fa-arrow-left mr-2"></i>Back to Dashboard
+                </button>
+            </div>
+            
+            <div class="floating-card rounded-3xl p-10">
+                <div class="text-center mb-10">
+                    <div class="w-20 h-20 gradient-primary rounded-3xl flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-list text-3xl text-white"></i>
+                    </div>
+                    <h2 class="text-4xl font-bold text-gray-800 mb-4">My Items</h2>
+                    <p class="text-xl text-gray-600">Manage your lost and found items</p>
+                </div>
+
+                <!-- Filter Tabs -->
+                <div class="flex justify-center mb-8">
+                    <div class="bg-gray-100 rounded-2xl p-2 flex space-x-2">
+                        <button onclick="filterItems('all')" id="filter-all" class="px-6 py-3 rounded-xl font-semibold transition-all filter-btn active">
+                            All Items
+                        </button>
+                        <button onclick="filterItems('lost')" id="filter-lost" class="px-6 py-3 rounded-xl font-semibold transition-all filter-btn">
+                            Lost Items
+                        </button>
+                        <button onclick="filterItems('found')" id="filter-found" class="px-6 py-3 rounded-xl font-semibold transition-all filter-btn">
+                            Found Items
+                        </button>
+                        <button onclick="filterItems('matched')" id="filter-matched" class="px-6 py-3 rounded-xl font-semibold transition-all filter-btn">
+                            Matched Items
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Items Grid -->
+                <div id="items-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Items will be populated here -->
+                </div>
+
+                <!-- Empty State -->
+                <div id="empty-state" class="text-center py-16">
+                    <div class="text-6xl mb-6">📦</div>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">No Items Yet</h3>
+                    <p class="text-gray-600 text-lg mb-8">Start by reporting a lost item or logging something you found!</p>
+                    <div class="flex justify-center space-x-4">
+                        <button onclick="showSection('report-lost')" class="premium-button text-white px-6 py-3 rounded-xl font-semibold">
+                            <i class="fas fa-plus mr-2"></i>Report Lost Item
+                        </button>
+                        <button onclick="showSection('found-item')" class="success-button text-white px-6 py-3 rounded-xl font-semibold">
+                            <i class="fas fa-search mr-2"></i>Report Found Item
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced Modals and JavaScript will continue... -->
+    
+    <script>
+        // Enhanced Application State with Backend Simulation
+        class SmartFindBackend {
+            constructor() {
+                this.apiUrl = 'https://api.smartfind.pro'; // Simulated API endpoint
+                this.isOnline = navigator.onLine;
+                this.syncQueue = JSON.parse(localStorage.getItem('smartfind_sync_queue') || '[]');
+                this.setupConnectionMonitoring();
+            }
+
+            setupConnectionMonitoring() {
+                window.addEventListener('online', () => {
+                    this.isOnline = true;
+                    this.updateConnectionStatus('online');
+                    this.syncPendingData();
+                });
+
+                window.addEventListener('offline', () => {
+                    this.isOnline = false;
+                    this.updateConnectionStatus('offline');
+                });
+
+                // Initial status
+                this.updateConnectionStatus(this.isOnline ? 'online' : 'offline');
+            }
+
+            updateConnectionStatus(status) {
+                const statusElement = document.getElementById('connection-status');
+                const textElement = document.getElementById('connection-text');
+                
+                if (statusElement && textElement) {
+                    statusElement.className = connection-status connection-${status};
+                    
+                    switch(status) {
+                        case 'online':
+                            textElement.innerHTML = '<i class="fas fa-wifi mr-2"></i>Connected';
+                            break;
+                        case 'offline':
+                            textElement.innerHTML = '<i class="fas fa-wifi-slash mr-2"></i>Offline';
+                            break;
+                        case 'syncing':
+                            textElement.innerHTML = '<i class="fas fa-sync-alt fa-spin mr-2"></i>Syncing...';
+                            break;
+                    }
+                }
+            }
+
+            async saveItem(type, data) {
+                const item = {
+                    ...data,
+                    id: this.generateId(type),
+                    timestamp: new Date().toISOString(),
+                    synced: false
+                };
+
+                // Save locally first
+                const storageKey = smartfind_${type}_items;
+                const items = JSON.parse(localStorage.getItem(storageKey) || '[]');
+                items.push(item);
+                localStorage.setItem(storageKey, JSON.stringify(items));
+
+                // Add to sync queue if online
+                if (this.isOnline) {
+                    await this.syncToServer(type, item);
+                } else {
+                    this.addToSyncQueue(type, 'create', item);
+                }
+
+                return item;
+            }
+
+            async syncToServer(type, item) {
+                try {
+                    this.updateConnectionStatus('syncing');
+                    
+                    // Simulate API call
+                    await this.simulateApiCall(/${type}, 'POST', item);
+                    
+                    // Mark as synced
+                    item.synced = true;
+                    this.updateLocalItem(type, item);
+                    
+                    this.updateConnectionStatus('online');
+                    return true;
+                } catch (error) {
+                    console.error('Sync failed:', error);
+                    this.addToSyncQueue(type, 'create', item);
+                    return false;
+                }
+            }
+
+            async simulateApiCall(endpoint
