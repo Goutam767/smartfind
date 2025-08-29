@@ -60,8 +60,12 @@ Owner sets STX reward → Smart contract automatically transfers tokens to finde
 
 -> Image uploads stored on IPFS
 
--> Geolocation mapping for lost/found items  
+-> Geolocation mapping for lost/found items   
+*** The Demo video link 
+https://www.loom.com/share/1a2db609eb3a4c149eae322386ef2a9d?sid=12d67d56-4df6-4e53-b5fa-22489a2ed924
 
+<p>Clarity Development</p>
+<img width="1046" height="508" alt="Screenshot 2025-08-29 121400" src="https://github.com/user-attachments/assets/0dea02a6-988f-4f3b-a346-11f261669802" />
 ____________________________________
 The project called TrustFind was developed  by 
 Gare Bhavitha
