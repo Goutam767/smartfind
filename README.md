@@ -1,6 +1,6 @@
-SmartFound – Decentralized Lost & Found System
+TrustFind – Decentralized Lost & Found System
 
-SmartFound is a decentralized lost and found platform built on the Stacks blockchain, enabling users to securely report lost items, register found items, and claim rewards without intermediaries.
+Trustfind is a decentralized lost and found platform built on the Stacks blockchain, enabling users to securely report lost items, register found items, and claim rewards without intermediaries.
 It’s like a digital lost & found box on the blockchain – transparent, secure, and immutable.
 
 * Features
